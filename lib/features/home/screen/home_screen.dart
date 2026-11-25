@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:navostudy/features/testimonials/screen/testimonials_screen.dart';
 
 import '../../footer/screen/footer_screen.dart';
 import '../../landing/screen/landing_screen.dart';
 import '../../management/screen/management_page.dart';
 import '../../package/screen/package_screen.dart';
 import '../../response/screen/responce_screen.dart';
-import '../../trust_us/screen/trust_us_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
       children: [
         LandingScreen(),
         ResponseScreen(),
-        TrustUsScreen(),
+        TestimonialsScreen(),
         ManagementPage(),
         PackageScreen(),
       ],

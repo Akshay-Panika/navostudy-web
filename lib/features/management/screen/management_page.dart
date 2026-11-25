@@ -177,7 +177,7 @@ class _AnimatedTeamCardState extends State<_AnimatedTeamCard> {
                 color: _isHovered
                     ? Colors.blue
                     : Colors.blue.withOpacity(0.15),
-                width: _isHovered ? 2 : 1.5,
+                width: _isHovered ? 1 : 1.5,
               ),
               boxShadow: [
                 BoxShadow(

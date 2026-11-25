@@ -4,6 +4,50 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// =========================================================
+// HOVER SCALE WRAPPER (REUSABLE)
+// =========================================================
+class HoverScale extends StatefulWidget {
+  final Widget child;
+  final double scale;
+  final Duration duration;
+  final Curve curve;
+  final bool enableCursor;
+
+  const HoverScale({
+    super.key,
+    required this.child,
+    this.scale = 1.04,
+    this.duration = const Duration(milliseconds: 200),
+    this.curve = Curves.easeOut,
+    this.enableCursor = true,
+  });
+
+  @override
+  State<HoverScale> createState() => _HoverScaleState();
+}
+
+class _HoverScaleState extends State<HoverScale> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      cursor: widget.enableCursor
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
+      child: AnimatedScale(
+        scale: _hovering ? widget.scale : 1.0,
+        duration: widget.duration,
+        curve: widget.curve,
+        child: widget.child,
+      ),
+    );
+  }
+}
+
 // 🔴 Changed to StatefulWidget to manage Syllabus and Demo Form states
 class BatchScreen extends StatefulWidget {
   const BatchScreen({super.key});
@@ -134,27 +178,32 @@ class _DesktopView extends StatelessWidget {
                   ],
                 ),
               ),
-              // --- TOP RIGHT IMAGE ---
-              Container(
-                height: 350,
-                width: 300,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Image.asset(
-                  'assets/image/shoolboy.jpg',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
-                      ),
-                    );
-                  },
+              // --- TOP RIGHT IMAGE (with subtle hover scale) ---
+              HoverScale(
+                scale: 1.03,
+                enableCursor: false,
+                child: Container(
+                  height: 350,
+                  width: 300,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Image.asset(
+                    'assets/image/shoolboy.jpg',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Center(
+                          child: Icon(Icons.image_not_supported,
+                              size: 50, color: Colors.grey),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -436,74 +485,80 @@ Widget _buildFreeBanner(
         spacing: 16,
         runSpacing: 12,
         children: [
-          ElevatedButton.icon(
-            // ✅ TOGGLE FORM INSTEAD OF YOUTUBE URL
-            onPressed: onToggleDemoForm,
-            icon: const Icon(Icons.play_circle_fill, size: 18),
-            label: Text(
-              "Start Free Demo",
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                fontSize: RFont.size(
-                  context,
-                  12,
-                  tablet: 13,
-                  desktop: 14,
+          HoverScale(
+            scale: 1.05,
+            child: ElevatedButton.icon(
+              // ✅ TOGGLE FORM INSTEAD OF YOUTUBE URL
+              onPressed: onToggleDemoForm,
+              icon: const Icon(Icons.play_circle_fill, size: 18),
+              label: Text(
+                "Enroll Now",
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w600,
+                  fontSize: RFont.size(
+                    context,
+                    12,
+                    tablet: 13,
+                    desktop: 14,
+                  ),
                 ),
               ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: const Color(0xFF3B66F5),
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 22,
-                vertical: 18,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF3B66F5),
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 18,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
               ),
             ),
           ),
-          OutlinedButton(
-            onPressed: onToggleSyllabus,
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Colors.white54),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 22,
-                vertical: 18,
+          HoverScale(
+            scale: 1.05,
+            child: OutlinedButton(
+              onPressed: onToggleSyllabus,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.white54),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 18,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "View Syllabus",
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: RFont.size(
-                      context,
-                      12,
-                      tablet: 13,
-                      desktop: 14,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "View Syllabus",
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: RFont.size(
+                        context,
+                        12,
+                        tablet: 13,
+                        desktop: 14,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                AnimatedRotation(
-                  turns: showSyllabus ? 0.5 : 0.0,
-                  duration: const Duration(milliseconds: 300),
-                  child: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.white,
-                    size: 18,
+                  const SizedBox(width: 8),
+                  AnimatedRotation(
+                    turns: showSyllabus ? 0.5 : 0.0,
+                    duration: const Duration(milliseconds: 300),
+                    child: const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -611,7 +666,8 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFF3B66F5).withOpacity(0.3), width: 2),
+        border:
+        Border.all(color: const Color(0xFF3B66F5).withOpacity(0.3), width: 2),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF3B66F5).withOpacity(0.08),
@@ -633,7 +689,8 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
                     color: const Color(0xFF3B66F5).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.person_add_alt_1, color: Color(0xFF3B66F5), size: 24),
+                  child: const Icon(Icons.person_add_alt_1,
+                      color: Color(0xFF3B66F5), size: 24),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -664,7 +721,9 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
                         controller: _nameController,
                         label: "Full Name",
                         icon: Icons.person_outline,
-                        validator: (value) => value!.isEmpty ? "Please enter your name" : null,
+                        validator: (value) => value!.isEmpty
+                            ? "Please enter your name"
+                            : null,
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -675,8 +734,12 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
                         icon: Icons.phone_outlined,
                         isPhone: true,
                         validator: (value) {
-                          if (value == null || value.isEmpty) return "Please enter mobile number";
-                          if (value.length < 10) return "Enter a valid 10-digit number";
+                          if (value == null || value.isEmpty) {
+                            return "Please enter mobile number";
+                          }
+                          if (value.length < 10) {
+                            return "Enter a valid 10-digit number";
+                          }
                           return null;
                         },
                       ),
@@ -692,18 +755,26 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 4),
-                        child: SizedBox(
-                          height: 55,
-                          child: ElevatedButton(
-                            onPressed: _submitForm,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF3B66F5),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            child: Text(
-                              "Submit & Join",
-                              style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
+                        child: HoverScale(
+                          scale: 1.03,
+                          child: SizedBox(
+                            height: 55,
+                            child: ElevatedButton(
+                              onPressed: _submitForm,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF3B66F5),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                "Submit & Join",
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -719,7 +790,9 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
                   controller: _nameController,
                   label: "Full Name",
                   icon: Icons.person_outline,
-                  validator: (value) => value!.isEmpty ? "Please enter your name" : null,
+                  validator: (value) => value!.isEmpty
+                      ? "Please enter your name"
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 _buildInputField(
@@ -728,27 +801,39 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
                   icon: Icons.phone_outlined,
                   isPhone: true,
                   validator: (value) {
-                    if (value == null || value.isEmpty) return "Please enter mobile number";
-                    if (value.length < 10) return "Enter a valid 10-digit number";
+                    if (value == null || value.isEmpty) {
+                      return "Please enter mobile number";
+                    }
+                    if (value.length < 10) {
+                      return "Enter a valid 10-digit number";
+                    }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
                 _buildClassDropdown(), // ✅ Class Field for Mobile
                 const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3B66F5),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text(
-                      "Submit & Join",
-                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
+                HoverScale(
+                  scale: 1.02,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed: _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF3B66F5),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        "Submit & Join",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -778,7 +863,8 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
         labelStyle: GoogleFonts.poppins(color: Colors.black54, fontSize: 14),
         filled: true,
         fillColor: Colors.grey.shade50,
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        contentPadding:
+        const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -805,11 +891,13 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
       value: _selectedClass,
       decoration: InputDecoration(
         labelText: "Select Class",
-        prefixIcon: const Icon(Icons.school_outlined, color: Color(0xFF3B66F5)),
+        prefixIcon:
+        const Icon(Icons.school_outlined, color: Color(0xFF3B66F5)),
         labelStyle: GoogleFonts.poppins(color: Colors.black54, fontSize: 14),
         filled: true,
         fillColor: Colors.grey.shade50,
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        contentPadding:
+        const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -856,7 +944,8 @@ Widget _buildSyllabusCard(BuildContext context) {
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: const Color(0xFF3B66F5).withOpacity(0.3), width: 2),
+      border:
+      Border.all(color: const Color(0xFF3B66F5).withOpacity(0.3), width: 2),
       boxShadow: [
         BoxShadow(
           color: const Color(0xFF3B66F5).withOpacity(0.08),
@@ -876,7 +965,8 @@ Widget _buildSyllabusCard(BuildContext context) {
                 color: const Color(0xFF3B66F5).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.menu_book, color: Color(0xFF3B66F5), size: 24),
+              child: const Icon(Icons.menu_book,
+                  color: Color(0xFF3B66F5), size: 24),
             ),
             const SizedBox(width: 16),
             Text(
@@ -898,21 +988,93 @@ Widget _buildSyllabusCard(BuildContext context) {
             ? Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _buildSubjectList(context, "Mental Ability Test (MAT)", Icons.psychology, ["Odd One Out", "Figure Matching", "Analogy", "Pattern Completion", "Spatial Visualization"])),
+            Expanded(
+              child: _buildSubjectList(
+                context,
+                "Mental Ability Test (MAT)",
+                Icons.psychology,
+                [
+                  "Odd One Out",
+                  "Figure Matching",
+                  "Analogy",
+                  "Pattern Completion",
+                  "Spatial Visualization"
+                ],
+              ),
+            ),
             const SizedBox(width: 20),
-            Expanded(child: _buildSubjectList(context, "Arithmetic Test", Icons.calculate, ["Number System", "HCF & LCM", "Profit & Loss", "Ratio & Proportion", "Time, Work & Distance"])),
+            Expanded(
+              child: _buildSubjectList(
+                context,
+                "Arithmetic Test",
+                Icons.calculate,
+                [
+                  "Number System",
+                  "HCF & LCM",
+                  "Profit & Loss",
+                  "Ratio & Proportion",
+                  "Time, Work & Distance"
+                ],
+              ),
+            ),
             const SizedBox(width: 20),
-            Expanded(child: _buildSubjectList(context, "Language Test", Icons.translate, ["Reading Comprehension", "Grammar & Vocabulary", "Idioms & Phrases", "Sentence Correction", "Fill in the Blanks"])),
+            Expanded(
+              child: _buildSubjectList(
+                context,
+                "Language Test",
+                Icons.translate,
+                [
+                  "Reading Comprehension",
+                  "Grammar & Vocabulary",
+                  "Idioms & Phrases",
+                  "Sentence Correction",
+                  "Fill in the Blanks"
+                ],
+              ),
+            ),
           ],
         )
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSubjectList(context, "Mental Ability Test (MAT)", Icons.psychology, ["Odd One Out", "Figure Matching", "Analogy", "Pattern Completion", "Spatial Visualization"]),
+            _buildSubjectList(
+              context,
+              "Mental Ability Test (MAT)",
+              Icons.psychology,
+              [
+                "Odd One Out",
+                "Figure Matching",
+                "Analogy",
+                "Pattern Completion",
+                "Spatial Visualization"
+              ],
+            ),
             const SizedBox(height: 20),
-            _buildSubjectList(context, "Arithmetic Test", Icons.calculate, ["Number System", "HCF & LCM", "Profit & Loss", "Ratio & Proportion", "Time, Work & Distance"]),
+            _buildSubjectList(
+              context,
+              "Arithmetic Test",
+              Icons.calculate,
+              [
+                "Number System",
+                "HCF & LCM",
+                "Profit & Loss",
+                "Ratio & Proportion",
+                "Time, Work & Distance"
+              ],
+            ),
             const SizedBox(height: 20),
-            _buildSubjectList(context, "Language Test", Icons.translate, ["Reading Comprehension", "Grammar & Vocabulary", "Idioms & Phrases", "Sentence Correction", "Fill in the Blanks"]),
+            _buildSubjectList(
+              context,
+              "Language Test",
+              Icons.translate,
+              [
+                "Reading Comprehension",
+                "Grammar & Vocabulary",
+                "Idioms & Phrases",
+                "Sentence Correction",
+                "Fill in the Blanks"
+              ],
+            ),
           ],
         ),
       ],
@@ -920,8 +1082,9 @@ Widget _buildSyllabusCard(BuildContext context) {
   );
 }
 
-/// HELPER WIDGET FOR SUBJECT LIST
-Widget _buildSubjectList(BuildContext context, String title, IconData icon, List<String> topics) {
+/// HELPER WIDGET FOR SUBJECT LIST — each topic row has hover highlight
+Widget _buildSubjectList(
+    BuildContext context, String title, IconData icon, List<String> topics) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -942,139 +1105,215 @@ Widget _buildSubjectList(BuildContext context, String title, IconData icon, List
         ],
       ),
       const SizedBox(height: 12),
-      ...topics.map((topic) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
+      ...topics.map(
+            (topic) => _HoverableTopicRow(topic: topic),
+      ),
+    ],
+  );
+}
+
+/// Hoverable topic row used inside syllabus
+class _HoverableTopicRow extends StatefulWidget {
+  final String topic;
+  const _HoverableTopicRow({required this.topic});
+
+  @override
+  State<_HoverableTopicRow> createState() => _HoverableTopicRowState();
+}
+
+class _HoverableTopicRowState extends State<_HoverableTopicRow> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      cursor: SystemMouseCursors.basic,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        margin: const EdgeInsets.only(bottom: 8),
+        padding:
+        const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: _hovering
+              ? const Color(0xFF3B66F5).withOpacity(0.05)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 4),
-              child: Icon(Icons.check_circle_outline, size: 14, color: Colors.grey),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: AnimatedScale(
+                scale: _hovering ? 1.2 : 1.0,
+                duration: const Duration(milliseconds: 180),
+                child: Icon(
+                  Icons.check_circle_outline,
+                  size: 14,
+                  color: _hovering
+                      ? const Color(0xFF3B66F5)
+                      : Colors.grey,
+                ),
+              ),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                topic,
+                widget.topic,
                 style: GoogleFonts.poppins(
-                  color: Colors.black54,
+                  color: _hovering
+                      ? const Color(0xFF3B66F5)
+                      : Colors.black54,
                   fontSize: RFont.size(context, 13, tablet: 13, desktop: 14),
                 ),
               ),
             ),
           ],
         ),
-      )),
-    ],
-  );
+      ),
+    );
+  }
 }
 
 /// ===============================
-/// 🧑‍🏫 TEACHER CARD
+/// 🧑‍🏫 TEACHER CARD — hover lift + scale
 /// ===============================
-Widget _buildTeacherCard(BuildContext context) {
-  return Container(
-    width: 240,
-    padding: const EdgeInsets.all(14),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(24),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.18),
-          blurRadius: 24,
-          offset: const Offset(0, 12),
+class _TeacherCard extends StatefulWidget {
+  const _TeacherCard();
+
+  @override
+  State<_TeacherCard> createState() => _TeacherCardState();
+}
+
+class _TeacherCardState extends State<_TeacherCard> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      cursor: SystemMouseCursors.basic,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+        transform: Matrix4.translationValues(0, _hovering ? -6 : 0, 0),
+        width: 240,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: _hovering
+                  ? const Color(0xFF3B66F5).withOpacity(0.28)
+                  : Colors.black.withOpacity(0.18),
+              blurRadius: _hovering ? 30 : 24,
+              offset: Offset(0, _hovering ? 16 : 12),
+            ),
+          ],
         ),
-      ],
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        /// TEACHER IMAGE
-        ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: Image.asset(
-            'assets/management/shiv.png',
-            height: 190,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// TEACHER IMAGE
+            ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Image.asset(
+                'assets/management/shiv.png',
                 height: 190,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF3B66F5).withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.person,
-                      size: 70,
-                      color: Color(0xFF3B66F5),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 190,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3B66F5).withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(18),
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                      "Image Not Found",
-                      style: TextStyle(color: Color(0xFF3B66F5), fontSize: 12),
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-        const SizedBox(height: 14),
-
-        /// NAME
-        Text(
-          "Shreyansh Gupta",
-          textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-            fontSize: RFont.size(context, 14, tablet: 15, desktop: 16),
-          ),
-        ),
-        const SizedBox(height: 4),
-
-        /// SUBJECT
-        Text(
-          "Navoday Specialist",
-          textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            color: Colors.black54,
-            fontSize: RFont.size(context, 11, tablet: 12, desktop: 12),
-          ),
-        ),
-        const SizedBox(height: 12),
-
-        /// DEMO BADGE
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: const Color(0xFF3B66F5).withOpacity(0.12),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.verified, color: Color(0xFF3B66F5), size: 14),
-              const SizedBox(width: 4),
-              Text(
-                "15 Days Free Demo",
-                style: GoogleFonts.poppins(
-                  color: const Color(0xFF3B66F5),
-                  fontWeight: FontWeight.w600,
-                  fontSize: RFont.size(context, 10, tablet: 11, desktop: 11),
-                ),
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person,
+                          size: 70,
+                          color: Color(0xFF3B66F5),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          "Image Not Found",
+                          style: TextStyle(
+                              color: Color(0xFF3B66F5), fontSize: 12),
+                        )
+                      ],
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 14),
+
+            /// NAME
+            Text(
+              "Shreyansh Gupta",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                color: Colors.black87,
+                fontWeight: FontWeight.bold,
+                fontSize: RFont.size(context, 14, tablet: 15, desktop: 16),
+              ),
+            ),
+            const SizedBox(height: 4),
+
+            /// SUBJECT
+            Text(
+              "Navoday Specialist",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                color: Colors.black54,
+                fontSize: RFont.size(context, 11, tablet: 12, desktop: 12),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            /// DEMO BADGE
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFF3B66F5).withOpacity(0.12),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.verified,
+                      color: Color(0xFF3B66F5), size: 14),
+                  const SizedBox(width: 4),
+                  Text(
+                    "15 Days Free Demo",
+                    style: GoogleFonts.poppins(
+                      color: const Color(0xFF3B66F5),
+                      fontWeight: FontWeight.w600,
+                      fontSize:
+                      RFont.size(context, 10, tablet: 11, desktop: 11),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
+}
+
+Widget _buildTeacherCard(BuildContext context) {
+  return const _TeacherCard();
 }
 
 /// FREE BANNER BADGE
@@ -1134,35 +1373,75 @@ class _FreeHighlight extends StatelessWidget {
 }
 
 /// ===============================
-/// STAT CARD
+/// STAT CARD — hover lift + tinted border
 /// ===============================
+class _HoverStatCard extends StatefulWidget {
+  final String value;
+  final String title;
+  const _HoverStatCard({required this.value, required this.title});
+
+  @override
+  State<_HoverStatCard> createState() => _HoverStatCardState();
+}
+
+class _HoverStatCardState extends State<_HoverStatCard> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      cursor: SystemMouseCursors.basic,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        transform: Matrix4.translationValues(0, _hovering ? -4 : 0, 0),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+        decoration: BoxDecoration(
+          color:  Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _hovering
+                ? const Color(0xFF3B66F5).withOpacity(0.4)
+                : Colors.black12,
+          ),
+          boxShadow: _hovering
+              ? [
+            BoxShadow(
+              color: const Color(0xFF3B66F5).withOpacity(0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ]
+              : [],
+        ),
+        child: Column(
+          children: [
+            Text(
+              widget.value,
+              style: GoogleFonts.poppins(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: RFont.size(context, 18, tablet: 20, desktop: 24),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              widget.title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                color: Colors.black54,
+                fontSize: RFont.size(context, 12, tablet: 13, desktop: 14),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 Widget _buildStatCard(BuildContext context, String value, String title) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.black12),
-    ),
-    child: Column(
-      children: [
-        Text(
-          value,
-          style: GoogleFonts.poppins(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: RFont.size(context, 18, tablet: 20, desktop: 24),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            color: Colors.black54,
-            fontSize: RFont.size(context, 12, tablet: 13, desktop: 14),
-          ),
-        ),
-      ],
-    ),
-  );
+  return _HoverStatCard(value: value, title: title);
 }

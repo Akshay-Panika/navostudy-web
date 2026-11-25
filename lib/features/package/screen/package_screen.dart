@@ -131,7 +131,7 @@ class _PackageScreenState extends State<PackageScreen> {
                     const Icon(Icons.add, color: Color(0xFFFA5222), size: 18),
                     const SizedBox(width: 6),
                     Text(
-                      "Start Your Free Practice",
+                      "Enroll Now",
                       style: GoogleFonts.poppins(
                         color: const Color(0xFF1E293B),
                         fontWeight: FontWeight.w600,

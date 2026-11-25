@@ -182,18 +182,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ),
                               ),
-                            if (isDesktop)
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.blue,
-                                ),
-                                onPressed: () {},
-                                child: const FaIcon(
-                                  FontAwesomeIcons.language,
-                                  color: Color(0xFF3B66F5),
-                                ),
-                              ),
+
                             if (!isDesktop)
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -289,11 +278,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 });
                                 scrollTop();
                               },
-                            ),
-
-                            mobileMenuButton(
-                              title: "Language",
-                              onTap: () => null,
                             ),
                           ],
                         ),

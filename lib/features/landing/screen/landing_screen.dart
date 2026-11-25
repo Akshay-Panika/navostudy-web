@@ -1,12 +1,15 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart'; // ✅ URL Launcher Import
+import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/utils/app_color.dart';
 import '../../../core/widget/responsive_font.dart';
 import '../../../core/widget/screen_helper.dart';
 
-// 🔴 Converted to StatefulWidget to manage Demo Form state
+// ============================================================
+// LANDING SCREEN
+// ============================================================
+
 class LandingScreen extends StatefulWidget {
   const LandingScreen({super.key});
 
@@ -27,7 +30,6 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        /// DESKTOP
         if (ScreenHelper.isDesktop(context)) {
           return _DesktopView(
             showEnrollForm: _showEnrollForm,
@@ -35,7 +37,6 @@ class _LandingScreenState extends State<LandingScreen> {
           );
         }
 
-        /// TABLET
         if (ScreenHelper.isTablet(context)) {
           return _TabletView(
             showEnrollForm: _showEnrollForm,
@@ -43,7 +44,6 @@ class _LandingScreenState extends State<LandingScreen> {
           );
         }
 
-        /// MOBILE
         return _MobileView(
           showEnrollForm: _showEnrollForm,
           onToggleEnrollForm: _toggleEnrollForm,
@@ -53,23 +53,52 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 }
 
+// ============================================================
+// HOVER SCALE ANIMATION
+// ============================================================
+
+class HoverScale extends StatefulWidget {
+  final Widget child;
+  final double scale;
+
+  const HoverScale({
+    super.key,
+    required this.child,
+    this.scale = 1.05,
+  });
+
+  @override
+  State<HoverScale> createState() => _HoverScaleState();
+}
+
+class _HoverScaleState extends State<HoverScale> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      cursor: SystemMouseCursors.click,
+      child: AnimatedScale(
+        scale: _hovering ? widget.scale : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+// ============================================================
+// DATA LISTS
+// ============================================================
+
 final List<Map<String, dynamic>> features = [
-  {
-    "icon": Icons.calendar_today_outlined,
-    "title": "50 mock exams",
-  },
-  {
-    "icon": Icons.school_outlined,
-    "title": "Guide & Tips",
-  },
-  {
-    "icon": Icons.assignment_outlined,
-    "title": "3,000+ sample tests",
-  },
-  {
-    "icon": Icons.smart_toy_outlined,
-    "title": "AI-powered scoring",
-  },
+  {"icon": Icons.calendar_today_outlined, "title": "50 mock exams"},
+  {"icon": Icons.school_outlined, "title": "Guide & Tips"},
+  {"icon": Icons.assignment_outlined, "title": "3,000+ sample tests"},
+  {"icon": Icons.smart_toy_outlined, "title": "AI-powered scoring"},
 ];
 
 final List<Map<String, dynamic>> tabs = [
@@ -100,6 +129,10 @@ final List<Map<String, dynamic>> tabs = [
   },
 ];
 
+// ============================================================
+// DESKTOP VIEW
+// ============================================================
+
 class _DesktopView extends StatelessWidget {
   final bool showEnrollForm;
   final VoidCallback onToggleEnrollForm;
@@ -112,17 +145,12 @@ class _DesktopView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 100,
-        vertical: 80,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 80),
       child: Column(
         children: [
-          /// TOP SECTION
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              /// LEFT
               Expanded(
                 flex: 6,
                 child: LandingContent(
@@ -132,29 +160,24 @@ class _DesktopView extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 50),
-
-              /// RIGHT
               Expanded(
                 flex: 5,
                 child: Row(
                   children: [
-                    /// FEATURES
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: features.map((e) {
+                        children: features.map((feature) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 20),
                             child: FeatureItem(
-                              icon: e["icon"],
-                              title: e["title"],
+                              icon: feature["icon"],
+                              title: feature["title"],
                             ),
                           );
                         }).toList(),
                       ),
                     ),
-
-                    /// IMAGE
                     const Expanded(
                       child: HeroImage(),
                     ),
@@ -164,17 +187,15 @@ class _DesktopView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 80),
-
-          /// BOTTOM CARDS
           Row(
-            children: tabs.map((e) {
+            children: tabs.map((tab) {
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: BottomTabCard(
-                    icon: e["icon"],
-                    title: e["title"],
-                    color: e["color"],
+                    icon: tab["icon"],
+                    title: tab["title"],
+                    color: tab["color"],
                   ),
                 ),
               );
@@ -185,6 +206,10 @@ class _DesktopView extends StatelessWidget {
     );
   }
 }
+
+// ============================================================
+// TABLET VIEW
+// ============================================================
 
 class _TabletView extends StatelessWidget {
   final bool showEnrollForm;
@@ -198,10 +223,7 @@ class _TabletView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 40,
-        vertical: 50,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
       child: Column(
         children: [
           LandingContent(
@@ -210,33 +232,30 @@ class _TabletView extends StatelessWidget {
             onToggleEnrollForm: onToggleEnrollForm,
           ),
           const SizedBox(height: 40),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              /// FEATURES
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: features.map((e) {
+                  children: features.map((feature) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: FeatureItem(
-                        icon: e["icon"],
-                        title: e["title"],
+                        icon: feature["icon"],
+                        title: feature["title"],
                       ),
                     );
                   }).toList(),
                 ),
               ),
-
-              /// IMAGE
-              const Expanded(child: HeroImage()),
+              const Expanded(
+                child: HeroImage(),
+              ),
             ],
           ),
           const SizedBox(height: 40),
-
           GridView.builder(
             shrinkWrap: true,
             itemCount: tabs.length,
@@ -261,6 +280,10 @@ class _TabletView extends StatelessWidget {
   }
 }
 
+// ============================================================
+// MOBILE VIEW
+// ============================================================
+
 class _MobileView extends StatelessWidget {
   final bool showEnrollForm;
   final VoidCallback onToggleEnrollForm;
@@ -282,33 +305,30 @@ class _MobileView extends StatelessWidget {
             onToggleEnrollForm: onToggleEnrollForm,
           ),
           const SizedBox(height: 30),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              /// FEATURES
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: features.map((e) {
+                  children: features.map((feature) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: FeatureItem(
-                        icon: e["icon"],
-                        title: e["title"],
+                        icon: feature["icon"],
+                        title: feature["title"],
                       ),
                     );
                   }).toList(),
                 ),
               ),
-
-              /// IMAGE
-              const Expanded(child: HeroImage()),
+              const Expanded(
+                child: HeroImage(),
+              ),
             ],
           ),
           const SizedBox(height: 40),
-
           GridView.builder(
             shrinkWrap: true,
             itemCount: tabs.length,
@@ -333,6 +353,10 @@ class _MobileView extends StatelessWidget {
   }
 }
 
+// ============================================================
+// LANDING CONTENT
+// ============================================================
+
 class LandingContent extends StatelessWidget {
   final bool isCenter;
   final bool showEnrollForm;
@@ -351,82 +375,24 @@ class LandingContent extends StatelessWidget {
       crossAxisAlignment:
       isCenter ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
-        /// BADGE
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 10,
-          ),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF07E3F),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: List.generate(
-                  3,
-                      (index) => Container(
-                    margin: const EdgeInsets.only(right: 4),
-                    width: 22,
-                    height: 22,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white24,
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      size: 14,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                "Trusted by 10k+ test-takers",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: RFont.size(
-                    context,
-                    12,
-                    tablet: 14,
-                    desktop: 14,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        _buildBadge(context),
 
         const SizedBox(height: 25),
 
-        /// TITLE
         RichText(
           textAlign: isCenter ? TextAlign.center : TextAlign.start,
           text: TextSpan(
             style: GoogleFonts.poppins(
               color: Colors.black,
-              fontSize: RFont.size(
-                context,
-                34,
-                tablet: 42,
-                desktop: 58,
-              ),
+              fontSize: RFont.size(context, 34, tablet: 42, desktop: 58),
               fontWeight: FontWeight.bold,
               height: 1.2,
             ),
             children: const [
-              TextSpan(
-                text: "Reach Your Target\n",
-              ),
+              TextSpan(text: "Reach Your Target\n"),
               TextSpan(
                 text: "Navo Study",
-                style: TextStyle(
-                  color: Color(0xFF3B66F5),
-                ),
+                style: TextStyle(color: Color(0xFF3B66F5)),
               ),
             ],
           ),
@@ -434,31 +400,28 @@ class LandingContent extends StatelessWidget {
 
         const SizedBox(height: 30),
 
-        /// BUTTON
-        ElevatedButton.icon(
-          onPressed: onToggleEnrollForm, // ✅ Toggles the form
-          icon: const Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-          label: const Text(
-            "Start Your Free Practice",
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF3B66F5),
-            foregroundColor: Colors.white,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 26,
-              vertical: 20,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+        HoverScale(
+          scale: 1.06,
+          child: ElevatedButton.icon(
+            onPressed: onToggleEnrollForm,
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text("Enroll Now"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF3B66F5),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shadowColor: const Color(0xFF3B66F5).withOpacity(0.5),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 26,
+                vertical: 20,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
             ),
           ),
         ),
 
-        /// 🟢 ANIMATED DEMO FORM CARD (Niche expand hoga)
         AnimatedCrossFade(
           firstChild: const SizedBox(height: 0, width: double.infinity),
           secondChild: Padding(
@@ -474,7 +437,6 @@ class LandingContent extends StatelessWidget {
 
         const SizedBox(height: 24),
 
-        /// RATING
         Row(
           mainAxisAlignment:
           isCenter ? MainAxisAlignment.center : MainAxisAlignment.start,
@@ -490,12 +452,7 @@ class LandingContent extends StatelessWidget {
               style: TextStyle(
                 color: Colors.grey.shade600,
                 fontWeight: FontWeight.w500,
-                fontSize: RFont.size(
-                  context,
-                  12,
-                  tablet: 14,
-                  desktop: 13,
-                ),
+                fontSize: RFont.size(context, 12, tablet: 14, desktop: 13),
               ),
             ),
           ],
@@ -503,9 +460,56 @@ class LandingContent extends StatelessWidget {
       ],
     );
   }
+
+  Widget _buildBadge(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF07E3F),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: List.generate(
+              3,
+                  (index) => Container(
+                margin: const EdgeInsets.only(right: 4),
+                width: 22,
+                height: 22,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white24,
+                ),
+                child: const Icon(
+                  Icons.person,
+                  size: 14,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            "Trusted by 10k+ test-takers",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: RFont.size(context, 12, tablet: 14, desktop: 14),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class FeatureItem extends StatelessWidget {
+// ============================================================
+// FEATURE ITEM - HOVER ANIMATION
+// ============================================================
+
+class FeatureItem extends StatefulWidget {
   final IconData icon;
   final String title;
 
@@ -516,48 +520,112 @@ class FeatureItem extends StatelessWidget {
   });
 
   @override
+  State<FeatureItem> createState() => _FeatureItemState();
+}
+
+class _FeatureItemState extends State<FeatureItem> {
+  bool _hovering = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          size: 22,
-          color: Colors.black87,
-        ),
-        const SizedBox(width: 12),
-        Flexible(
-          child: Text(
-            title,
-            style: TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.w600,
-              fontSize: RFont.size(
-                context,
-                14,
-                tablet: 16,
-                desktop: 18,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      cursor: SystemMouseCursors.basic,
+      child: AnimatedSlide(
+        offset: _hovering ? const Offset(0.03, 0) : Offset.zero,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedScale(
+              scale: _hovering ? 1.18 : 1.0,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              child: Icon(
+                widget.icon,
+                size: 22,
+                color: _hovering
+                    ? const Color(0xFF3B66F5)
+                    : Colors.black87,
               ),
             ),
-          ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Text(
+                widget.title,
+                style: TextStyle(
+                  color: _hovering
+                      ? const Color(0xFF3B66F5)
+                      : Colors.black87,
+                  fontWeight: FontWeight.w600,
+                  fontSize: RFont.size(context, 14, tablet: 16, desktop: 18),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
 
-class HeroImage extends StatelessWidget {
+// ============================================================
+// HERO IMAGE - FLOATING ANIMATION
+// ============================================================
+
+class HeroImage extends StatefulWidget {
   const HeroImage({super.key});
 
   @override
+  State<HeroImage> createState() => _HeroImageState();
+}
+
+class _HeroImageState extends State<HeroImage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _float;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+
+    _float = Tween<double>(begin: -8, end: 8).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: ScreenHelper.isMobile(context) ? 300 : 350,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.contain,
-          image: AssetImage(
-            'assets/image/shoolboy.jpg',
+    return AnimatedBuilder(
+      animation: _float,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _float.value),
+          child: child,
+        );
+      },
+      child: Container(
+        height: ScreenHelper.isMobile(context) ? 300 : 350,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            fit: BoxFit.contain,
+            image: AssetImage('assets/image/shoolboy.jpg'),
           ),
         ),
       ),
@@ -565,7 +633,11 @@ class HeroImage extends StatelessWidget {
   }
 }
 
-class BottomTabCard extends StatelessWidget {
+// ============================================================
+// BOTTOM TAB CARD - HOVER ANIMATION
+// ============================================================
+
+class BottomTabCard extends StatefulWidget {
   final IconData icon;
   final String title;
   final Color color;
@@ -578,76 +650,89 @@ class BottomTabCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.grey,
-          width: .3,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          /// ICON
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              color: Colors.black,
-              size: RFont.size(
-                context,
-                14,
-                tablet: 16,
-                desktop: 20,
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
+  State<BottomTabCard> createState() => _BottomTabCardState();
+}
 
-          /// TITLE
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
-              fontSize: RFont.size(
-                context,
-                10,
-                tablet: 14,
-                desktop: 16,
-              ),
+class _BottomTabCardState extends State<BottomTabCard> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      cursor: SystemMouseCursors.click,
+      child: AnimatedSlide(
+        offset: _hovering ? const Offset(0, -0.05) : Offset.zero,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _hovering
+                  ? widget.color.withOpacity(0.7)
+                  : Colors.grey,
+              width: _hovering ? 1.2 : 0.3,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: _hovering
+                    ? widget.color.withOpacity(0.3)
+                    : Colors.black.withOpacity(0.03),
+                blurRadius: _hovering ? 20 : 12,
+                offset: Offset(0, _hovering ? 12 : 4),
+              ),
+            ],
           ),
-        ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: widget.color,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  widget.icon,
+                  color: Colors.black,
+                  size: RFont.size(context, 14, tablet: 16, desktop: 20),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                widget.title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: RFont.size(context, 10, tablet: 14, desktop: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-// =========================================================
-// 📝 DEMO REGISTRATION FORM
-// =========================================================
+// ============================================================
+// DEMO REGISTRATION FORM
+// ============================================================
+
 class _DemoRegistrationForm extends StatefulWidget {
   const _DemoRegistrationForm({Key? key}) : super(key: key);
 
   @override
-  State<_DemoRegistrationForm> createState() => _DemoRegistrationFormState();
+  State<_DemoRegistrationForm> createState() =>
+      _DemoRegistrationFormState();
 }
 
 class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
@@ -655,8 +740,8 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
 
-  // ✅ State for Class Dropdown (Class 3 - 8)
   String? _selectedClass;
+
   final List<String> _classes = [
     'Class 3',
     'Class 4',
@@ -675,11 +760,12 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // 1. Yahan aap backend me data save kar sakte hain
-
-      // 2. Uske baad YouTube open hoga
       final Uri url = Uri.parse('https://www.youtube.com/@navostudy');
-      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+
+      if (!await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      )) {
         debugPrint('Could not launch $url');
       }
     }
@@ -693,7 +779,10 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFF3B66F5).withOpacity(0.3), width: 2),
+        border: Border.all(
+          color: const Color(0xFF3B66F5).withOpacity(0.3),
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF3B66F5).withOpacity(0.08),
@@ -715,7 +804,11 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
                     color: const Color(0xFF3B66F5).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.person_add_alt_1, color: Color(0xFF3B66F5), size: 24),
+                  child: const Icon(
+                    Icons.person_add_alt_1,
+                    color: Color(0xFF3B66F5),
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -724,7 +817,8 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
                     style: GoogleFonts.poppins(
                       color: Colors.black87,
                       fontWeight: FontWeight.bold,
-                      fontSize: RFont.size(context, 18, tablet: 20, desktop: 22),
+                      fontSize:
+                      RFont.size(context, 18, tablet: 20, desktop: 22),
                     ),
                   ),
                 ),
@@ -734,115 +828,142 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
             const Divider(),
             const SizedBox(height: 20),
 
-            // Responsive Form Fields (Row for Desktop, Column for Mobile)
-            ScreenHelper.isDesktop(context) || ScreenHelper.isTablet(context)
-                ? Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _buildInputField(
-                        controller: _nameController,
-                        label: "Full Name",
-                        icon: Icons.person_outline,
-                        validator: (value) => value!.isEmpty ? "Please enter your name" : null,
+            if (ScreenHelper.isDesktop(context) ||
+                ScreenHelper.isTablet(context))
+              Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _buildInputField(
+                          controller: _nameController,
+                          label: "Full Name",
+                          icon: Icons.person_outline,
+                          validator: (value) =>
+                          value!.isEmpty ? "Please enter your name" : null,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: _buildInputField(
-                        controller: _mobileController,
-                        label: "Mobile Number",
-                        icon: Icons.phone_outlined,
-                        isPhone: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) return "Please enter mobile number";
-                          if (value.length < 10) return "Enter a valid 10-digit number";
-                          return null;
-                        },
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: _buildInputField(
+                          controller: _mobileController,
+                          label: "Mobile Number",
+                          icon: Icons.phone_outlined,
+                          isPhone: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter mobile number";
+                            }
+                            if (value.length < 10) {
+                              return "Enter a valid 10-digit number";
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _buildClassDropdown()),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: SizedBox(
-                          height: 55,
-                          child: ElevatedButton(
-                            onPressed: _submitForm,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF3B66F5),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            child: Text(
-                              "Submit & Join",
-                              style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: _buildClassDropdown()),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: HoverScale(
+                            scale: 1.03,
+                            child: SizedBox(
+                              height: 55,
+                              child: ElevatedButton(
+                                onPressed: _submitForm,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                  const Color(0xFF3B66F5),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Submit & Join",
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            )
-                : Column(
-              children: [
-                _buildInputField(
-                  controller: _nameController,
-                  label: "Full Name",
-                  icon: Icons.person_outline,
-                  validator: (value) => value!.isEmpty ? "Please enter your name" : null,
-                ),
-                const SizedBox(height: 16),
-                _buildInputField(
-                  controller: _mobileController,
-                  label: "Mobile Number",
-                  icon: Icons.phone_outlined,
-                  isPhone: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return "Please enter mobile number";
-                    if (value.length < 10) return "Enter a valid 10-digit number";
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildClassDropdown(),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3B66F5),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text(
-                      "Submit & Join",
-                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
+                    ],
+                  ),
+                ],
+              )
+            else
+              Column(
+                children: [
+                  _buildInputField(
+                    controller: _nameController,
+                    label: "Full Name",
+                    icon: Icons.person_outline,
+                    validator: (value) =>
+                    value!.isEmpty ? "Please enter your name" : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInputField(
+                    controller: _mobileController,
+                    label: "Mobile Number",
+                    icon: Icons.phone_outlined,
+                    isPhone: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter mobile number";
+                      }
+                      if (value.length < 10) {
+                        return "Enter a valid 10-digit number";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildClassDropdown(),
+                  const SizedBox(height: 20),
+                  HoverScale(
+                    scale: 1.02,
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 55,
+                      child: ElevatedButton(
+                        onPressed: _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF3B66F5),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          "Submit & Join",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),
     );
   }
 
-  // Custom Input Field Builder
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
@@ -857,10 +978,16 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: const Color(0xFF3B66F5)),
-        labelStyle: GoogleFonts.poppins(color: Colors.black54, fontSize: 14),
+        labelStyle: GoogleFonts.poppins(
+          color: Colors.black54,
+          fontSize: 14,
+        ),
         filled: true,
         fillColor: Colors.grey.shade50,
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -871,27 +998,41 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF3B66F5), width: 2),
+          borderSide: const BorderSide(
+            color: Color(0xFF3B66F5),
+            width: 2,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
+          borderSide: const BorderSide(
+            color: Colors.redAccent,
+            width: 1,
+          ),
         ),
       ),
     );
   }
 
-  // ✅ Custom Dropdown for Class
   Widget _buildClassDropdown() {
     return DropdownButtonFormField<String>(
       value: _selectedClass,
       decoration: InputDecoration(
         labelText: "Select Class",
-        prefixIcon: const Icon(Icons.school_outlined, color: Color(0xFF3B66F5)),
-        labelStyle: GoogleFonts.poppins(color: Colors.black54, fontSize: 14),
+        prefixIcon: const Icon(
+          Icons.school_outlined,
+          color: Color(0xFF3B66F5),
+        ),
+        labelStyle: GoogleFonts.poppins(
+          color: Colors.black54,
+          fontSize: 14,
+        ),
         filled: true,
         fillColor: Colors.grey.shade50,
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -902,11 +1043,17 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF3B66F5), width: 2),
+          borderSide: const BorderSide(
+            color: Color(0xFF3B66F5),
+            width: 2,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
+          borderSide: const BorderSide(
+            color: Colors.redAccent,
+            width: 1,
+          ),
         ),
       ),
       items: _classes.map((String value) {
@@ -914,7 +1061,10 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
           value: value,
           child: Text(
             value,
-            style: GoogleFonts.poppins(color: Colors.black87, fontSize: 14),
+            style: GoogleFonts.poppins(
+              color: Colors.black87,
+              fontSize: 14,
+            ),
           ),
         );
       }).toList(),
@@ -923,7 +1073,8 @@ class _DemoRegistrationFormState extends State<_DemoRegistrationForm> {
           _selectedClass = newValue;
         });
       },
-      validator: (value) => value == null ? "Please select your class" : null,
+      validator: (value) =>
+      value == null ? "Please select your class" : null,
     );
   }
 }
