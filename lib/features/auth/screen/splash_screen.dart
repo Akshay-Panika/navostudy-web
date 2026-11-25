@@ -129,13 +129,19 @@ class _SplashScreenState extends State<SplashScreen>
       // Splash fades → dashboard shows through
       opacity: _screenOpacity,
       child: Scaffold(
+        // ⚪ White background
+        backgroundColor: Colors.white,
         body: Container(
           width: double.infinity,
           decoration: const BoxDecoration(
+            // Subtle white → very light blue tint so logo card still pops
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF3B66F5), Color(0xFF2A4FCC)],
+              colors: [
+                Colors.white,
+                Color(0xFFF3F6FF),
+              ],
             ),
           ),
           child: Center(
@@ -152,9 +158,15 @@ class _SplashScreenState extends State<SplashScreen>
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(28),
+                        // Light border so card is visible on white bg
+                        border: Border.all(
+                          color: const Color(0xFF3B66F5).withOpacity(0.15),
+                          width: 1.5,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            // Soft brand-blue glow instead of black
+                            color: const Color(0xFF3B66F5).withOpacity(0.18),
                             blurRadius: 30,
                             offset: const Offset(0, 10),
                           ),
@@ -169,13 +181,13 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 32),
 
-                // 📛 App name
+                // 📛 App name — dark on white
                 FadeTransition(
                   opacity: _fadeAnim,
                   child: Text(
                     "Navo Study",
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: Colors.black87,
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
@@ -184,13 +196,13 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 8),
 
-                // 💬 Tagline
+                // 💬 Tagline — grey on white
                 FadeTransition(
                   opacity: _fadeAnim,
                   child: Text(
                     "Reach Your Target",
                     style: GoogleFonts.poppins(
-                      color: Colors.white70,
+                      color: Colors.grey.shade600,
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                     ),
@@ -198,13 +210,15 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 48),
 
-                // ⏳ Loader
+                // ⏳ Loader — brand blue on white
                 const SizedBox(
                   width: 32,
                   height: 32,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Color(0xFF3B66F5),
+                    ),
                   ),
                 ),
               ],

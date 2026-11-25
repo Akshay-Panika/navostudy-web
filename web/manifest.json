@@ -1,11 +1,13 @@
+
 {
-    "name": "navostudy",
-    "short_name": "navostudy",
-    "start_url": ".",
+    "name": "Navostudy - Online Exam Preparation",
+    "short_name": "Navostudy",
+    "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#0175C2",
+    "background_color": "#ffffff",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Prepare for Navodaya Entrance Exam, MP Board and CBSE Board examinations with Navostudy.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
