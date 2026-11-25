@@ -1,0 +1,39 @@
+{
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "navo-study",
+          "appId": "1:722033756140:android:bbc214b1fd1f7f0ea362c9",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "navo-study",
+          "configurations": {
+            "android": "1:722033756140:android:bbc214b1fd1f7f0ea362c9",
+            "ios": "1:722033756140:ios:df79a4658c8e95c1a362c9",
+            "macos": "1:722033756140:ios:df79a4658c8e95c1a362c9",
+            "web": "1:722033756140:web:096d077361b90345a362c9",
+            "windows": "1:722033756140:web:b2abaf73fbab3369a362c9"
+          }
+        }
+      }
+    }
+  }
+}
